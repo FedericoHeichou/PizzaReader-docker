@@ -1,0 +1,53 @@
+services:
+  php-fpm:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    depends_on:
+      - db
+    image: php-fpm-custom:${version:-latest}
+    restart: unless-stopped
+    working_dir: /var/www/html
+    volumes:
+      - ./app:/var/www/html
+
+  nginx:
+    depends_on:
+      - php-fpm
+    image: nginx:stable-alpine
+    restart: unless-stopped
+    ports:
+      - "443:443"
+    volumes:
+      - ./app:/var/www/html
+      - ./nginx/conf.d/:/etc/nginx/conf.d/:ro
+      - ./nginx/ssl/:/etc/nginx/ssl/:ro
+
+  httpd:
+    depends_on:
+      - php-fpm
+    image: httpd:2.4-alpine
+    restart: unless-stopped
+    ports:
+      - "80:80"
+    volumes:
+      - ./app:/var/www/html
+      - ./httpd/httpd.conf:/usr/local/apache2/conf/httpd.conf:ro
+
+  db:
+    image: mysql:8.0
+    restart: unless-stopped
+    environment:
+      MYSQL_DATABASE: $db
+      MYSQL_USER: $db_user
+      MYSQL_PASSWORD: $db_userpass
+      MYSQL_ROOT_PASSWORD: $db_rootpass
+    volumes:
+      - ./mysqldata:/var/lib/mysql/
+
+  phpmyadmin:
+    image: phpmyadmin
+    ports:
+      - 8000:80
+    environment:
+      - PMA_ARBITRARY=1
