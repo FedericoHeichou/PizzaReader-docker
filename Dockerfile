@@ -14,6 +14,7 @@ RUN mv "$PHP_INI_DIR/php.ini-production" "$PHP_INI_DIR/php.ini" \
         php82-pecl-imagick \
         imagemagick-dev \
         ghostscript \
+        postfix \
     && docker-php-ext-configure gd --enable-gd --with-freetype --with-jpeg --with-webp \
     && docker-php-ext-install -j$(nproc) mysqli zip gd opcache pdo_mysql \
     && pecl install imagick \
