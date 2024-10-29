@@ -19,7 +19,7 @@ RUN mv "$PHP_INI_DIR/php.ini-production" "$PHP_INI_DIR/php.ini" \
     && docker-php-ext-install -j$(nproc) mysqli zip gd opcache pdo_mysql \
     && pecl install imagick \
     && docker-php-ext-enable imagick \
-    && sed -i '/<\/policymap>/i<policy domain="coder" rights="write" pattern="PDF" \/>' policy.xml \
+    && sed -i '/<\/policymap>/i<policy domain="coder" rights="write" pattern="PDF" \/>' /etc/ImageMagick-7/policy.xml \
     && apk del --no-cache \
         libpng-dev \
         libwebp-dev \
